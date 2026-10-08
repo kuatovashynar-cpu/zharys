@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Алгебра жарысы · жеке қатысу</title>
+<style>
+:root{color-scheme:dark;--bg:#17132e;--cd:#231d48;--ln:#3b3470;--tx:#f1eeff;--mut:#a9a3d6;--ye:#ffd84d;--c0:#ff8fa3;--c1:#7cc7ff;--c2:#7be0a0;--rd:#ff5d6c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.55 system-ui,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:16px}
+h1{font-size:clamp(1.9rem,6vw,3rem);line-height:1.15;margin:.3em 0;color:var(--ye)}
+h2{margin:.2em 0 .4em;font-size:1.2rem}
+.card{background:var(--cd);border:2px solid var(--ln);border-radius:14px;padding:16px;margin:12px 0}
+button{font:inherit;cursor:pointer;border:2px solid var(--tx);background:transparent;color:var(--tx);border-radius:10px;padding:10px 16px;text-align:left}
+button:hover{background:#ffffff1a}
+button.p{background:var(--ye);color:#000;border-color:var(--ye);font-weight:700;text-align:center}
+button.sel{background:var(--c1);color:#000;border-color:var(--c1)}
+button:disabled{opacity:.55;cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ye);outline-offset:2px}
+input{font:inherit;width:100%;background:#120f26;color:var(--tx);border:2px solid var(--ln);border-radius:10px;padding:10px;margin:4px 0 10px}
+.hide{display:none}
+.net{font-size:.85rem;margin:0}
+.sb{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tm{border:2px solid var(--ln);border-radius:12px;padding:8px;text-align:center;background:var(--cd)}
+.tm b{display:block}
+.tm .sc{font-size:2rem;font-weight:800}
+.tb{height:10px;background:#120f26;border-radius:5px;overflow:hidden;margin:8px 0}
+.tb i{display:block;height:100%;width:100%;background:var(--c2)}
+.code{font-size:clamp(3rem,14vw,6rem);font-weight:900;letter-spacing:.15em;color:var(--ye);text-align:center;margin:0}
+.big{font-size:clamp(1.1rem,2.6vw,1.6rem)}
+.qg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.qg .card{margin:0}
+.st{font-weight:700;margin-top:8px}
+.opts{display:grid;gap:8px;margin:12px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row input{flex:1;min-width:120px;margin:0}
+.w{font-weight:400;color:var(--tx)}
+.chip{display:inline-block;border-radius:20px;padding:1px 10px;margin:2px;font-size:.9rem;background:#ffffff14}
+.chip.y{background:#1f6b45}.chip.n{background:#7a2c3c}
+.pod{display:flex;align-items:flex-end;justify-content:center;gap:10px;height:260px;margin:20px 0}
+.col{flex:1;max-width:170px;text-align:center}
+.col .bar{border-radius:10px 10px 0 0;height:0;transition:height 1.4s cubic-bezier(.2,.8,.2,1);display:flex;justify-content:center;font-size:2.2rem;padding-top:6px}
+ol{margin:.3em 0;padding-left:1.4em}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<div id="en">
+<h1>Алгебра жарысы</h1>
+<p>Әр студент өз телефонынан жеке жауап береді. Команда ұпайы мүшелердің нәтижесінен құралады.</p>
+<div class="card"><button class="p" id="bh" style="width:100%">Мен оқытушымын (проектор)</button></div>
+<div class="card">
+<h2>Студент</h2>
+<label for="jc">Бөлме коды</label><input id="jc" maxlength="5" autocapitalize="characters" placeholder="5 таңба">
+<label for="jn">Атыңыз</label><input id="jn" maxlength="16" placeholder="Мысалы: Айгерім">
+<p style="margin:0 0 6px">Командаңызды таңдаңыз</p>
+<div class="row" id="jt"></div>
+<button class="p" id="jg" style="width:100%;margin-top:12px">Қосылу</button>
+<p id="je" style="color:var(--rd)"></p>
+</div>
+<p class="net"></p>
+</div>
+<div id="h" class="hide"></div>
+<div id="t" class="hide"></div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const COL=['var(--c0)','var(--c1)','var(--c2)'],NM=['7 сынып','8 сынып','9 сынып'];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const parse=s=>{s=String(s).replace(',','.').replace('−','-').trim();return s.includes('/')?s.split('/').reduce((a,b)=>a/b):+s};
+const QS=[
+[
+{t:'n',p:10,q:'(x − 4)² + 8x өрнегінің x = 3 болғандағы мәнін табыңыз.',a:25,w:'(x − 4)² + 8x = x² + 16, сондықтан 9 + 16 = 25.'},
+{t:'m',p:10,q:'Оқушы (a + b)² = a² + b² деп жазды. Ең тиімді алғашқы қадам қандай?',o:['Формуланы 5 рет жаздырамын','a = 2, b = 3 болғанда екі жақты санмен есептетіп, салыстыртамын','Дұрыс жауапты айтып беремін'],c:1,w:'Нақты сандармен салыстыру қатені оқушының өзі көруіне жағдай жасайды: 25 ≠ 13.'},
+{t:'n',p:15,q:'a + b = 6 және a² + b² = 20 болса, ab неге тең?',a:8,w:'(a + b)² = a² + b² + 2ab, яғни 36 = 20 + 2ab, ab = 8.'},
+{t:'n',p:20,q:'2024² − 2023 · 2025 өрнегін есептеңіз.',a:1,w:'2023 · 2025 = 2024² − 1. Айырма 1.'}
+],[
+{t:'n',p:10,q:'x² − 5x + 6 = 0 теңдеуі түбірлерінің квадраттарының қосындысы неге тең?',a:13,w:'Түбірлер 2 және 3: 4 + 9 = 13.'},
+{t:'m',p:10,q:'Оқушы x² = 25 теңдеуін x = 5 деп шешті. Не істейсіз?',o:['Қатесін түзетіп, жауабын жазып беремін','y = x² және y = 25 графиктерін салғызып, қиылысу нүктелерін санатамын','Тек дискриминант формуласын қайталатамын'],c:1,w:'Графикте екі қиылысу нүктесі көрінеді, сондықтан екі түбір бар: ±5.'},
+{t:'n',p:15,q:'x² + px + 12 = 0 теңдеуінің бір түбірі 3. Екінші түбірін табыңыз.',a:4,w:'Виет: x₁·x₂ = 12, 3·x₂ = 12, x₂ = 4.'},
+{t:'n',p:20,q:'x² − 6x + c = 0 теңдеуі түбірлерінің айырмасы 2. c неге тең?',a:8,w:'x₁ + x₂ = 6, x₁ − x₂ = 2, сондықтан 4 және 2. c = 4·2 = 8.'}
+],[
+{t:'n',p:10,q:'Арифметикалық прогрессияда a₃ = 7, a₈ = 22. a₁₀ неге тең?',a:28,w:'5d = 15, d = 3. a₁₀ = 22 + 2·3 = 28.'},
+{t:'m',p:10,q:'Оқушы −3x > 12 теңсіздігін x > −4 деп шешті. Қатені қалай ашасыз?',o:['Сан түзуінде −4-тің екі жағынан сан алып, теңсіздікке қойғызып тексертемін','Жауапты қызыл қаламмен сызамын','Ережені 10 рет жаздырамын'],c:0,w:'Тексеру ережені мағыналы етеді: теріс санға бөлгенде таңба өзгереді, x < −4.'},
+{t:'n',p:15,q:'Геометриялық прогрессияда b₁ = 3, q = 2. Алғашқы 6 мүшенің қосындысы неге тең?',a:189,w:'S₆ = 3(2⁶ − 1)/(2 − 1) = 3·63 = 189.'},
+{t:'n',p:20,q:'x² − 5x − 14 ≤ 0 теңсіздігінің бүтін шешімдері неше?',a:10,w:'Түбірлер −2 және 7. Шешім [−2; 7], бүтін сандар саны 10.'}
+]];
+const FIN={q:'x² + y² = 25 және x + y = 7 болса, xy неге тең?',o:['6','12','24','18'],c:1,w:'(x + y)² = 49 = 25 + 2xy, сондықтан xy = 12.'};
+
+/* Желі: ntfy.sh */
+const BASE='https://ntfy.sh/';let topic='',es=null,onOpen=null,seq=0,NET=0;
+let dev;try{dev=localStorage.getItem('algdev')}catch(e){}
+if(!dev){dev=Math.random().toString(36).slice(2,8);try{localStorage.setItem('algdev',dev)}catch(e){}}
+function setNet(v){NET=v;document.querySelectorAll('.net').forEach(e=>{e.textContent=v?'● байланыс бар':'● байланыс жоқ';e.style.color=v?'var(--c2)':'var(--rd)'})}
+function send(o){return fetch(BASE+topic,{method:'POST',body:JSON.stringify(o)}).then(r=>{if(!r.ok)throw 0;setNet(1)}).catch(()=>setNet(0))}
+function listen(since,cb){
+  if(es)es.close();
+  es=new EventSource(BASE+topic+'/sse'+(since?'?since='+since:''));
+  es.onopen=()=>{setNet(1);onOpen&&onOpen()};es.onerror=()=>setNet(0);
+  es.onmessage=e=>{try{const m=JSON.parse(e.data);if(m.event==='message')cb(JSON.parse(m.message))}catch(_){}};
+}
+
+/* ===== ОҚЫТУШЫ ===== */
+let H,ht=null;
+const mem=i=>Object.entries(H.P).filter(([d,p])=>p.t===i);
+function tsc(i){const m=mem(i);if(!m.length)return 0;const s=m.reduce((a,[,p])=>a+p.s,0);return H.avg?Math.round(s/m.length*10)/10:s}
+const ranked=()=>Object.entries(H.P).sort((a,b)=>b[1].s-a[1].s);
+function hostInit(){
+  const A='abcdefghjkmnpqrstuvwxyz23456789';let code='';
+  for(let i=0;i<5;i++)code+=A[Math.floor(Math.random()*A.length)];
+  topic='alg-'+code;H={code,P:{},r:-1,ph:'lobby',ans:{},qs:0,res:{},avg:true,dl:0};
+  $('en').classList.add('hide');$('h').classList.remove('hide');
+  listen('',hm);bc();HR();
+}
+function bc(x){
+  seq=Math.max(seq+1,Date.now());
+  send(Object.assign({k:'st',seq,ph:H.ph,r:H.r,sc:[0,1,2].map(tsc),n:[0,1,2].map(i=>mem(i).length)},x||{}));
+}
+function hm(m){
+  if(m.k==='join'&&m.team>=0&&m.team<3&&m.dev){
+    const p=H.P[m.dev]||(H.P[m.dev]={s:0,k:0,t:m.team});
+    p.n=String(m.n||'Студент').slice(0,16);if(H.ph==='lobby')p.t=m.team;
+    bc({dur:Math.max(0,Math.round((H.dl-Date.now())/1000))||0});HR();
+  }else if(m.k==='ans'&&(H.ph==='q'||H.ph==='fq')&&H.P[m.dev]&&!H.ans[m.dev]){
+    H.ans[m.dev]={val:m.val,bet:m.bet,t:Date.now()};HR();
+    if(Object.keys(H.P).every(d=>H.ans[d]))(H.ph==='q'?resRound:resFinal)();
+  }
+}
+function timer(sec,done){
+  clearInterval(ht);H.dl=Date.now()+sec*1000;
+  ht=setInterval(()=>{
+    const l=Math.max(0,(H.dl-Date.now())/1000),e=$('htt'),b=$('hbr');
+    if(e)e.textContent=Math.ceil(l);if(b)b.style.width=l/sec*100+'%';
+    if(l<=0){clearInterval(ht);done()}
+  },250);
+}
+function startRound(){
+  H.r++;if(H.r>=4){H.ph='fq';H.ans={};H.qs=Date.now();bc({dur:45});timer(45,resFinal);HR();return}
+  H.ph='q';H.ans={};H.qs=Date.now();bc({dur:60});timer(60,resRound);HR();
+}
+function resRound(){
+  if(H.ph!=='q')return;clearInterval(ht);H.res={};
+  Object.entries(H.P).forEach(([d,p])=>{
+    const a=H.ans[d],q=QS[p.t][H.r];
+    const ok=!!a&&(q.t==='n'?parse(a.val)===q.a:+a.val===q.c);let pt=0;
+    if(ok){pt=q.p+Math.max(0,Math.min(5,Math.floor((60-(a.t-H.qs)/1000)/12)))+(p.k>=1?5:0);p.s+=pt;p.k++}else p.k=0;
+    H.res[d]={o:ok?1:0,p:pt,s:p.s,a:a?1:0};
+  });
+  H.ph='res';bc({res:H.res});HR();
+}
+function resFinal(){
+  if(H.ph!=='fq')return;clearInterval(ht);H.res={};
+  Object.entries(H.P).forEach(([d,p])=>{
+    const a=H.ans[d];if(!a){H.res[d]={o:0,p:0,s:p.s,a:0,b:0};return}
+    let bet=+a.bet;if(![5,10,20].includes(bet)||bet>Math.max(5,p.s))bet=5;
+    const ok=+a.val===FIN.c;p.s=Math.max(0,p.s+(ok?bet:-bet));H.res[d]={o:ok?1:0,p:0,s:p.s,a:1,b:bet};
+  });
+  H.ph='fres';bc({res:H.res});HR();
+}
+const chips=(i,f)=>{
+  const m=mem(i);let s=m.slice(0,10).map(([d,p])=>{const r=H.res[d];return '<span class="chip'+(f&&r?(r.o?' y':' n'):'')+'">'+esc(p.n)+(f&&r?(r.o?' ✔':' ✗'):'')+'</span>'}).join('');
+  if(m.length>10)s+='<span class="chip">+'+(m.length-10)+'</span>';return s||'<span style="color:var(--mut)">әзірше ешкім жоқ</span>';
+};
+function top5(){return '<div class="card"><h2>Жеке рейтинг (топ 5)</h2><ol>'+ranked().slice(0,5).map(([d,p])=>'<li><span style="color:'+COL[p.t]+'">'+esc(p.n)+'</span> · '+NM[p.t]+' · <b>'+p.s+'</b></li>').join('')+'</ol></div>'}
+function sbH(){return '<div class="sb">'+[0,1,2].map(i=>'<div class="tm" style="border-color:'+COL[i]+'"><b style="color:'+COL[i]+'">'+NM[i]+' ('+mem(i).length+')</b><span class="sc">'+tsc(i)+'</span><span style="color:var(--mut)">'+(H.avg?'орташа':'қосынды')+'</span></div>').join('')+'</div>'}
+function HR(){
+  const B=$('h'),p=H.ph,P=Object.keys(H.P).length;let s='<p class="net"></p>';
+  if(p==='lobby'){
+    const link=location.href.split('?')[0]+'?r='+H.code;
+    s+='<h1>Алгебра жарысы</h1><div class="card"><p style="margin:0">Телефоннан сілтемені ашыңыз, кодты енгізіңіз:</p><p class="code">'+H.code.toUpperCase()+'</p><p style="word-break:break-all;color:var(--mut)">'+esc(link)+'</p></div><div class="qg">'+[0,1,2].map(i=>'<div class="card" style="border-color:'+COL[i]+'"><b style="color:'+COL[i]+'">'+NM[i]+'</b> · '+mem(i).length+' студент<br>'+chips(i)+'</div>').join('')+'</div><p><button id="hv">Команда ұпайы: '+(H.avg?'орташа (әділірек)':'қосынды')+'</button> <button class="p" id="hs"'+(P?'':' disabled')+'>Жарысты бастау</button></p>';
+  }else if(p==='q'){
+    s+=sbH()+'<div class="card"><div class="row" style="justify-content:space-between"><b class="big">Раунд '+(H.r+1)+' / 4</b><b class="big"><span id="htt">60</span> с</b></div><div class="tb"><i id="hbr"></i></div></div><div class="qg">'+[0,1,2].map(i=>{const q=QS[i][H.r],m=mem(i),a=m.filter(([d])=>H.ans[d]).length;return '<div class="card" style="border-color:'+COL[i]+'"><b style="color:'+COL[i]+'">'+NM[i]+'</b> · '+q.p+' ұпай<p class="big">'+q.q+'</p>'+(q.t==='m'?'<p>'+q.o.map((o,k)=>(k+1)+') '+o).join('<br>')+'</p>':'')+'<p class="st" style="color:'+(a===m.length&&m.length?'var(--c2)':'var(--mut)')+'">Жауап берді: '+a+' / '+m.length+'</p></div>'}).join('')+'</div>';
+  }else if(p==='res'||p==='fres'){
+    const f=p==='fres';
+    s+=sbH()+'<div class="qg" style="margin-top:12px">'+[0,1,2].map(i=>{
+      const q=f?FIN:QS[i][H.r],m=mem(i),ok=m.filter(([d])=>H.res[d]&&H.res[d].o).length;
+      return '<div class="card" style="border-color:'+COL[i]+'"><b style="color:'+COL[i]+'">'+NM[i]+'</b><p class="st">Дұрыс жауап: '+ok+' / '+m.length+'</p><p class="w">Жауап: <b>'+esc(q.t==='n'?q.a:q.o[q.c])+'</b><br>'+q.w+'</p>'+chips(i,1)+'</div>';
+    }).join('')+'</div>'+top5()+'<p><button class="p" id="hn" style="width:100%">'+(f?'Жеңімпаздарды көрсету':H.r===3?'Финалға өту':'Келесі раунд')+'</button></p>';
+  }else if(p==='fq'){
+    s+=sbH()+'<div class="card"><div class="row" style="justify-content:space-between"><b class="big">Финал: ставка</b><b class="big"><span id="htt">45</span> с</b></div><div class="tb"><i id="hbr"></i></div><p class="big">'+FIN.q+'</p><p>'+FIN.o.map((o,k)=>(k+1)+') '+o).join('<br>')+'</p><p>Жауап берді: <b>'+Object.keys(H.ans).length+' / '+P+'</b></p></div>';
+  }else{
+    const r=[0,1,2].sort((a,b)=>tsc(b)-tsc(a)),Hs=[220,165,120],M=['🥇','🥈','🥉'];
+    s+='<h1>Жеңімпаз: <span style="color:'+COL[r[0]]+'">'+NM[r[0]]+'</span></h1><div class="pod">'+[1,0,2].map(k=>{const i=r[k];return '<div class="col"><b style="color:'+COL[i]+'">'+NM[i]+'</b><span class="big">'+tsc(i)+'</span><div class="bar" style="background:'+COL[i]+'" data-h="'+Hs[k]+'">'+M[k]+'</div></div>'}).join('')+'</div>'+top5();
+    setTimeout(()=>document.querySelectorAll('.bar').forEach(b=>b.style.height=b.dataset.h+'px'),100);
+  }
+  B.innerHTML=s;setNet(NET);
+  if($('hs'))$('hs').onclick=startRound;
+  if($('hv'))$('hv').onclick=()=>{H.avg=!H.avg;HR();bc()};
+  if($('hn'))$('hn').onclick=()=>{
+    if(p==='fres'){
+      H.ph='end';const rk={};ranked().forEach(([d],i)=>rk[d]=i+1);
+      bc({rk,tr:[0,1,2].sort((a,b)=>tsc(b)-tsc(a))});HR();
+    }else startRound();
+  };
+}
+
+/* ===== СТУДЕНТ ===== */
+let M={team:-1,st:null,key:'',sent:{},end:0,tt:null,bet:5,me:0};
+[7,8,9].forEach((g,i)=>{const b=document.createElement('button');b.textContent=g+' сынып';b.style.borderColor=COL[i];
+  b.onclick=()=>{M.team=i;[...$('jt').children].forEach((x,j)=>x.classList.toggle('sel',j===i))};$('jt').appendChild(b)});
+const pr=new URLSearchParams(location.search).get('r');if(pr)$('jc').value=pr.toUpperCase();
+try{$('jn').value=localStorage.getItem('algname')||''}catch(e){}
+$('bh').onclick=hostInit;
+$('jg').onclick=()=>{
+  const c=$('jc').value.trim().toLowerCase(),n=$('jn').value.trim();
+  if(c.length!==5||M.team<0||!n){$('je').textContent='Кодты, атыңызды енгізіп, команданы таңдаңыз.';return}
+  try{localStorage.setItem('algname',n)}catch(e){}
+  topic='alg-'+c;M.name=n;
+  $('en').classList.add('hide');$('t').classList.remove('hide');
+  onOpen=()=>send({k:'join',team:M.team,n,dev});
+  listen('10m',m=>{if(m.k==='st'&&m.seq>seq){seq=m.seq;M.st=m;TR()}});
+  TR();
+};
+function TR(){
+  const s=M.st,i=M.team,B=$('t');
+  if(!s){B.innerHTML='<p class="net"></p><p>Жарыс жүргізушісіне қосылуда…</p>';setNet(NET);return}
+  const key=s.ph+s.r;
+  if(key===M.key&&(s.ph==='q'||s.ph==='fq'))return;
+  const newKey=key!==M.key;M.key=key;clearInterval(M.tt);
+  const R=s.res&&s.res[dev];if(R)M.me=R.s;
+  let h='<p class="net"></p><div class="card" style="border-color:'+COL[i]+'"><b>'+esc(M.name)+'</b> · <span style="color:'+COL[i]+'">'+NM[i]+'</span><br>Сіздің ұпайыңыз: <b>'+M.me+'</b> · команда: <b>'+s.sc[i]+'</b></div>';
+  if(s.ph==='lobby')h+='<div class="card"><p>Қосылдыңыз. Оқытушы жарысты бастағанша күтіңіз.</p></div>';
+  else if(s.ph==='q'){
+    const q=QS[i][s.r];
+    h+='<div class="card"><p style="color:var(--mut);margin:0">Раунд '+(s.r+1)+' / 4 · '+q.p+' ұпай · <b id="tt"></b> с</p><div class="tb"><i id="tbr"></i></div><p class="big">'+q.q+'</p><div id="ans"></div></div>';
+  }else if(s.ph==='fq'){
+    h+='<div class="card"><p style="color:var(--mut);margin:0">Финал · <b id="tt"></b> с</p><div class="tb"><i id="tbr"></i></div><p class="big">'+FIN.q+'</p><p style="margin:4px 0">Ставка:</p><div class="row" id="bets"></div><div class="opts" id="ans"></div></div>';
+  }else if(s.ph==='res'||s.ph==='fres'){
+    const f=s.ph==='fres',q=f?FIN:QS[i][s.r];
+    h+='<div class="card"><p class="big" style="color:'+(R&&R.o?'var(--c2)':'var(--rd)')+'">'+(!R?'Сіз бұл кезеңге қатыспадыңыз':!R.a?'Жауап жіберілмеді':R.o?'✔ Дұрыс! +'+(f?R.b:R.p):'✗ Қате'+(f?' −'+R.b:''))+'</p><p class="w">Дұрыс жауап: <b>'+esc(q.t==='n'?q.a:q.o[q.c])+'</b><br>'+q.w+'</p></div><p style="color:var(--mut)">Келесіні күтіңіз…</p>';
+  }else{
+    const pl=s.rk&&s.rk[dev],tp=s.tr?s.tr.indexOf(i)+1:0;
+    h+='<div class="card"><p class="big">'+(tp?['🥇','🥈','🥉'][tp-1]+' Команда: '+tp+'-орын':'')+'</p><p>'+(pl?'Жеке орныңыз: <b>'+pl+'</b> · ұпай: <b>'+M.me+'</b>':'Нәтиже проекторда көрсетілген.')+'</p></div>';
+  }
+  B.innerHTML=h;setNet(NET);
+  if(s.ph==='q'||s.ph==='fq'){
+    if(newKey)M.end=Date.now()+(s.dur||60)*1000;
+    buildAns(s);
+    M.tt=setInterval(()=>{
+      const l=Math.max(0,(M.end-Date.now())/1000),e=$('tt');
+      if(e){e.textContent=Math.ceil(l);$('tbr').style.width=l/(s.dur||60)*100+'%'}
+      if(l<=0){clearInterval(M.tt);document.querySelectorAll('#ans button,#ans input,#bets button').forEach(x=>x.disabled=true)}
+    },250);
+  }
+}
+function buildAns(s){
+  const i=M.team,A=$('ans'),f=s.ph==='fq',q=f?FIN:QS[i][s.r],sk=s.ph+s.r,ok='<p class="st" style="color:var(--c2)">✔ Жауап жіберілді. Нәтижені күтіңіз.</p>';
+  if(M.sent[sk]){A.innerHTML=ok;if($('bets'))$('bets').remove();return}
+  const done=(val,bet)=>{M.sent[sk]=1;send({k:'ans',val,bet,dev});A.innerHTML=ok;if($('bets'))$('bets').remove()};
+  if(f){
+    M.bet=5;const bt=$('bets');
+    [5,10,20].forEach(v=>{if(v>Math.max(5,M.me))return;const b=document.createElement('button');b.textContent=v;b.className=v===5?'sel':'';
+      b.onclick=()=>{M.bet=v;[...bt.children].forEach(x=>x.classList.toggle('sel',x===b))};bt.appendChild(b)});
+  }
+  if(q.t==='n'){
+    A.innerHTML='<div class="row"><input id="in" inputmode="decimal" aria-label="Жауап" placeholder="жауап"><button class="p" id="sd">Жіберу</button></div>';
+    $('sd').onclick=()=>{if($('in').value.trim())done($('in').value.trim())};
+  }else{
+    A.className='opts';
+    q.o.forEach((o,k)=>{const b=document.createElement('button');b.textContent=o;b.onclick=()=>done(k,f?M.bet:0);A.appendChild(b)});
+  }
+}
+</script>
+</body>
+</html>
